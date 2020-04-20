@@ -24,7 +24,8 @@ def decrypt_message(private_key, encrypted_message):
     return decrypted.decode('ASCII')
 
 private_key = loadPrivateKey('./keys/eddytorres_private.pem')
-public_key = loadPublicKey('./keys/eddytorres_public.pem')
+public_key = loadPublicKey('./keys/mayala_public.pem')
+next_public_key = loadPublicKey('./keys/Mike_Pinta_public.pem')
 
 def add_to_log(ip, message, direction):
     now = datetime.now()
@@ -58,6 +59,10 @@ def get_message(message):
 def deal_with_client(conn, addr):
     ip = str(addr[0])
     add_to_general_log(ip, str(addr[1]), 'Connected')
+    next_ip = 'husky.spellkaze.com'
+    next_port = 9090
+    next_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    next_socket.connect(next_ip, next_port)
 
     try:
         while True:
@@ -67,6 +72,17 @@ def deal_with_client(conn, addr):
 
             add_to_general_log(ip, str(addr[1]), binascii.hexlify(message).decode('ASCII'))
             message = decrypt_message(private_key, message)
+            # forwards
+            forwarded_message = encrypt_message(next_public_key, message)
+            next_socket.sendall(forwarded_message)
+            print("Forwarded message "+message+" to IP "+next_ip+":"+next_port)
+            forwarded_response = None
+            while forwarded_response is None:
+                forwarded_response = next_port.recv(2048)
+            forwarded_response = decrypt_message(private_key, forwarded_response)
+            forwarded_response = parse_message(forwarded_response)
+            print("Server "+next_ip+":"+next_port+" answered "+forwarded_response)
+            # continues
             message = parse_message(message)
 
             if(message != "DISCONNECT"):
@@ -83,17 +99,20 @@ def deal_with_client(conn, addr):
                 add_to_log(ip,  binascii.hexlify(message).decode('ASCII'), 'S')
                 break
         conn.close()
+        next_socket.close()
     except:
         message = get_message('DISCONNECT')
         message = encrypt_message(public_key, message)
         conn.sendall(message)
+        next_socket.sendall(message)
         add_to_log(ip,  binascii.hexlify(message).decode('ASCII'), 'S')
         conn.close()
+        next_socket.close()
 
 if __name__ == "__main__":
     port_number = 9090
     bindsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    bindsocket.bind(('127.0.0.1', port_number))
+    bindsocket.bind(('31.220.58.100', port_number))
     bindsocket.listen(1)
     fromaddr = None
 

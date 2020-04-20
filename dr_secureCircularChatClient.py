@@ -25,7 +25,7 @@ def decrypt_message(private_key, encrypted_message):
     return decrypted.decode('ASCII')
 
 private_key = loadPrivateKey('./keys/eddytorres_public.pem')
-public_key = loadPublicKey('./keys/eddytorres_public.pem')
+public_key = loadPublicKey('./keys/Mike_Pinta_public.pem')
 
 def send(message, s):
     if s is not None:
@@ -50,15 +50,6 @@ def write_to_log(message, direction):
     f.close()
 
 if __name__ == '__main__':
-    f = open("./inputfile.txt", 'r')
-    file = f.readlines()
-    f.close()
-
-    file_array = []
-    for val in file:
-        file_array.append(val.strip('\n'))
-
-    random.shuffle(file_array)
 
     ServerIP = 'husky.spellkaze.com'
     ServerPort = 9090
@@ -68,9 +59,6 @@ if __name__ == '__main__':
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ServerIP, ServerPort))
 
-    for val in file_array:
-        message = str(len(val)+1).zfill(4) + val + '\0'
-        send(message, s)
-        time.sleep(5)
+    send('message', s)
     send('0011DISCONNECT\0', s)
     s.close()
