@@ -112,7 +112,7 @@ def deal_with_client(conn, addr):
 if __name__ == "__main__":
     port_number = 9090
     bindsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    bindsocket.bind(('127.0.0.1', port_number))
+    bindsocket.bind(('31.220.58.100', port_number))
     bindsocket.listen(1)
     fromaddr = None
 
