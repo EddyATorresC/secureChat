@@ -62,7 +62,7 @@ def deal_with_client(conn, addr):
     next_ip = 'husky.spellkaze.com'
     next_port = 9090
     next_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    next_socket.connect(next_ip, next_port)
+    next_socket.connect((next_ip, next_port))
 
     try:
         while True:
@@ -112,7 +112,7 @@ def deal_with_client(conn, addr):
 if __name__ == "__main__":
     port_number = 9090
     bindsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    bindsocket.bind(('31.220.58.100', port_number))
+    bindsocket.bind(('127.0.0.1', port_number))
     bindsocket.listen(1)
     fromaddr = None
 
