@@ -24,7 +24,7 @@ def decrypt_message(private_key, encrypted_message):
     return decrypted.decode('ASCII')
 
 private_key = loadPrivateKey('./keys/eddytorres_private.pem')
-public_key = loadPublicKey('./keys/mayala_public.pem')
+public_key = loadPublicKey('./keys/emendezq_public.pem')
 next_public_key = loadPublicKey('./keys/Mike_Pinta_public.pem')
 
 def add_to_log(ip, message, direction):
@@ -78,7 +78,7 @@ def deal_with_client(conn, addr):
             print("Forwarded message "+message+" to IP "+next_ip+":"+next_port)
             forwarded_response = None
             while forwarded_response is None:
-                forwarded_response = next_port.recv(2048)
+                forwarded_response = next_socket.recv(2048)
             forwarded_response = decrypt_message(private_key, forwarded_response)
             forwarded_response = parse_message(forwarded_response)
             print("Server "+next_ip+":"+next_port+" answered "+forwarded_response)
